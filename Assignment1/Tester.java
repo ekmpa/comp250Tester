@@ -41,7 +41,7 @@ class AirportTest { // 2 points
     }
 }
 
-class RoomTest {    // 6 points
+class RoomTest {    // 10 points
 
     @Test
     @Tag("score:1") @DisplayName("Room Constructor Test1")
@@ -58,12 +58,23 @@ class RoomTest {    // 6 points
         assertEquals(11000, room.getPrice(),
                 "Room: getPrice() did not return the correct price for a queen room");
 
+        room = new Room("Queen");
+        assertEquals("queen", room.getType(), // comparing strings should be case insensitive
+                "Room: getType() did not return the correct type for a king room");
+        assertEquals(15000, room.getPrice(),
+                "Room: getPrice() did not return the correct price for a king room");
+
         room = new Room("king");
         assertEquals("king", room.getType(),
                 "Room: getType() did not return the correct type for a king room");
         assertEquals(15000, room.getPrice(),
                 "Room: getPrice() did not return the correct price for a king room");
 
+        room = new Room("KING");
+        assertEquals("king", room.getType(),
+                "Room: getType() did not return the correct type for a king room");
+        assertEquals(15000, room.getPrice(),
+                "Room: getPrice() did not return the correct price for a king room");
     }
 
 
@@ -98,6 +109,14 @@ class RoomTest {    // 6 points
                 "Room: findAvailableRoom() did not return the correct room");
     }
 
+    @Test
+    @Tag("score:1") @DisplayName("Room findAvailableRoom() Test1.2 (check case)")
+    void findAvailableRoom_Test12() {
+        Room[] rooms = {new Room("KINg"), new Room("quEEn"), new Room("DOUBLe")};
+        assertEquals(rooms[1], Room.findAvailableRoom(rooms, "qUeen"),
+                "Room: findAvailableRoom() did not return the correct room (case sensitivity)");
+    }
+
     //Check if the method returns null when no room is found
     @Test
     @Tag("score:1") @DisplayName("Room findAvailableRoom() Test2")
@@ -115,6 +134,15 @@ class RoomTest {    // 6 points
         assertEquals(rooms[1], Room.findAvailableRoom(rooms, "queen"),
                 "Room: findAvailableRoom() did not return the correct room");
     }
+
+    @Test
+    @Tag("score:1") @DisplayName("Room findAvailableRoom() Test3.1 (case sensitivity)")
+    void findAvailableRoom_Test3() {
+        Room[] rooms = {new Room("king"), new Room("queen"), new Room("double"),new Room("queen")};
+        assertEquals(rooms[0], Room.findAvailableRoom(rooms, "kINg"),
+                "Room: findAvailableRoom() did not return the correct room (case sensitivity)");
+    }
+
 
     @Test
     @Tag("score:1") @DisplayName("Room findAvailableRoom() Test4")
@@ -137,6 +165,14 @@ class RoomTest {    // 6 points
     void makeRoomAvailable_Test1() {
         Room[] rooms = {new Room("double"), new Room("king"), new Room("queen")};
         assertFalse(Room.makeRoomAvailable(rooms, "king"),
+                "Room: makeRoomAvailable() did not return the correct value"  );
+    }
+
+    @Test
+    @Tag("score:1") @DisplayName("Room makeRoomAvailable() Test 8")
+    void makeRoomAvailable_Test1() {
+        Room[] rooms = {new Room("Double"), new Room("KING"), new Room("queen")};
+        assertFalse(Room.makeRoomAvailable(rooms, "kiNg"),
                 "Room: makeRoomAvailable() did not return the correct value"  );
     }
 
@@ -181,6 +217,17 @@ class RoomTest {    // 6 points
         Room[] rooms = {aDouble, null, aKing}; // Should go through room null without return false
         assertTrue(Room.makeRoomAvailable(rooms, "king"),
                 "Room: makeRoomAvailable() did not return the correct value"  );
+    }
+
+    @Test
+    @Tag("score:1") @DisplayName("Room makeRoomAvailable(): test 8")
+    void makeRoomAvailable_Test8() {
+        Room aDouble = new Room("DouBle");
+        Room king = new Room("KING");
+        king.changeAvailability(); // Making the aKing room not available/false
+        Room[] rooms = {aDouble, null, king}; // Should go through room null without return false
+        assertTrue(Room.makeRoomAvailable(rooms, "kiNg"),
+                "Room: makeRoomAvailable() did not return the correct value (case sensitivity)"  );
     }
 
     @Test
@@ -231,15 +278,15 @@ class HotelTest {       // 7 points
 
         assertFalse(Arrays.deepEquals(rooms, roomsCopy),
                 "Hotel: deep copy constructor did not create a deep copy of the input rooms array");
-        assertEquals("Hotel1", name,
+        assertEquals("hotel1", name.toLowerCase(),
                 "Hotel: Constructor did not set the name correctly");
     }
     @Test
     @Tag ("score:2") @DisplayName("Hotel reserveRoom() Test1")
     void reserveRoom_Test1() {
-        Room[] rooms = {new Room("double")};
+        Room[] rooms = {new Room("doubLe")};
         Hotel hotel1 = new Hotel("Hotel1", rooms);
-        assertEquals(9000, hotel1.reserveRoom("double"),
+        assertEquals(9000, hotel1.reserveRoom("dOuble"),
                 "Hotel: reserveRoom() did not return the correct price of the room after reserving it");
     }
 
@@ -379,6 +426,7 @@ class CustomerTest {    // 7 points
         assertEquals(1, customer.addToBasket(airport1, airport2),
                 "Customer: addToBasket() for the Flight type did not return the correct number of reservations in the basket");
     }
+
 
     @Test
     @Tag("score:1") @DisplayName("Customer removeFromBasket(Reservation) Test1")
